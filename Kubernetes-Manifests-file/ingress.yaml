@@ -5,44 +5,42 @@ metadata:
   namespace: three-tier
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
   rules:
-    - host: amanpathakdevops.study
-      http:
+    - http:
         paths:
-          - path: /api(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /api
+            pathType: Prefix
             backend:
               service:
                 name: api
                 port:
                   number: 3500
           - path: /healthz
-            pathType: ImplementationSpecific
+            pathType: Exact
             backend:
               service:
                 name: api
                 port:
                   number: 3500
           - path: /ready
-            pathType: ImplementationSpecific
+            pathType: Exact
             backend:
               service:
                 name: api
                 port:
                   number: 3500
           - path: /started
-            pathType: ImplementationSpecific
+            pathType: Exact
             backend:
               service:
                 name: api
                 port:
                   number: 3500
-          - path: /(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /
+            pathType: Prefix
             backend:
               service:
                 name: frontend
