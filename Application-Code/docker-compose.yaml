@@ -1,50 +1,49 @@
-version: '3.8'
-
+version: '3'
 services:
-  backend:
-    build: ./backend  # Path to your backend Dockerfile
-    container_name: backend
-    ports:
-      - "3500:3500"
-    environment:
-      - NODE_ENV=production
-      - USE_DB_AUTH="true"
-      - MONGO_CONN_STR=mongodb://mongodb-svc:27017/todo?directConnection=true  # Connection string to MongoDB
-      - MONGO_USERNAME=admin
-      - MONGO_PASSWORD=password123  
-    volumes:
-      - ./backend:/usr/src/app
-    depends_on:
-      - mongo  # Ensure MongoDB starts before the backend
-    networks:
-      - app-network
-
   frontend:
-    build: ./frontend  # Path to your frontend Dockerfile
-    container_name: frontend
-    ports:
-      - "3000:3000"
-    environment:
-      - REACT_APP_BACKEND_URL=https://backend:3500/api/tasks
+    build:
+      context: ./frontend
+    container_name: frontend-app
     volumes:
       - ./frontend:/usr/src/app
-    networks:
-      - app-network
-    command: npm start
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "3000:3000"
+    command: bash -c "npm install && npm start"
+    depends_on:
+      - backend
+      - mongodb
 
-  mongo:
+  backend:
+    build:
+      context: ./backend
+    container_name: backend-app
+    volumes:
+      - ./backend:/usr/src/app
+    environment:
+      - NODE_ENV=development
+      - MONGO_CONN_STR=mongodb://mongodb:27017/mydatabase
+      - USE_DB_AUTH=true
+      - MONGO_USERNAME=admin
+      - MONGO_PASSWORD=password123
+      - PORT=3500
+    ports:
+      - "3500:3500"
+    command: bash -c "npm install && node ./index.js"
+    depends_on:
+      - mongodb
+
+  mongodb:
     image: mongo:latest
-    container_name: mongo
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
     ports:
       - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin # username for MongoDB
-      MONGO_INITDB_ROOT_PASSWORD: password123 # password for MongoDB
     volumes:
-      - ./mongodb-data:/data/db  # Persistent volume for MongoDB data
-    networks:
-      - app-network
+      - mongo-data:/data/db
 
-networks:
-  app-network:
-    driver: bridge
+volumes:
+  mongo-data:
