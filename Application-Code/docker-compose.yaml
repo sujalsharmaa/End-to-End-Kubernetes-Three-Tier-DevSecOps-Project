@@ -8,8 +8,8 @@ services:
       - "3500:3500"
     environment:
       - NODE_ENV=production
-      - USE_DB_AUTH=mongodb
-      - MONGO_URL=mongodb://mongo:27017/mydatabase  # Connection string to MongoDB
+      - USE_DB_AUTH="true"
+      - MONGO_CONN_STR=mongodb://mongo:27017/mydatabase  # Connection string to MongoDB
       - MONGO_USERNAME=admin
       - MONGO_PASSWORD=password      
     volumes:
