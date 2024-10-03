@@ -7,6 +7,7 @@ services:
     volumes:
       - ./frontend:/usr/src/app
     environment:
+      - REACT_APP_BACKEND_URL=http://34.204.99.50:3500/api/tasks
       - NODE_ENV=development
     ports:
       - "3000:3000"
@@ -24,9 +25,6 @@ services:
     environment:
       - NODE_ENV=development
       - MONGO_CONN_STR=mongodb://mongodb:27017/mydatabase
-      - USE_DB_AUTH=true
-      - MONGO_USERNAME=admin
-      - MONGO_PASSWORD=password123
       - PORT=3500
     ports:
       - "3500:3500"
@@ -37,9 +35,6 @@ services:
   mongodb:
     image: mongo:latest
     container_name: mongodb
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password123
     ports:
       - "27017:27017"
     volumes:
