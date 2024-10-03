@@ -9,9 +9,9 @@ services:
     environment:
       - NODE_ENV=production
       - USE_DB_AUTH="true"
-      - MONGO_CONN_STR=mongodb://mongo:27017/mydatabase  # Connection string to MongoDB
+      - MONGO_CONN_STR=mongodb://mongodb-svc:27017/todo?directConnection=true  # Connection string to MongoDB
       - MONGO_USERNAME=admin
-      - MONGO_PASSWORD=password      
+      - MONGO_PASSWORD=password123  
     volumes:
       - ./backend:/usr/src/app
     depends_on:
@@ -38,8 +38,8 @@ services:
     ports:
       - "27017:27017"
     environment:
-      - MONGO_USERNAME=admin
-      - MONGO_PASSWORD=password
+      MONGO_INITDB_ROOT_USERNAME: admin # username for MongoDB
+      MONGO_INITDB_ROOT_PASSWORD: password123 # password for MongoDB
     volumes:
       - ./mongodb-data:/data/db  # Persistent volume for MongoDB data
     networks:
