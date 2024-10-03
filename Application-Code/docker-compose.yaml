@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend  # Path to your backend Dockerfile
+    container_name: backend
+    ports:
+      - "3500:3500"
+    environment:
+      - NODE_ENV=production
+      - USE_DB_AUTH=mongodb
+      - MONGO_URL=mongodb://mongo:27017/mydatabase  # Connection string to MongoDB
+      - MONGO_USERNAME=admin
+      - MONGO_PASSWORD=password      
+    volumes:
+      - ./backend:/usr/src/app
+    depends_on:
+      - mongo  # Ensure MongoDB starts before the backend
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend  # Path to your frontend Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=https://backend:3500/api/tasks
+    volumes:
+      - ./frontend:/usr/src/app
+    networks:
+      - app-network
+    command: npm start
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_USERNAME=admin
+      - MONGO_PASSWORD=password
+    volumes:
+      - ./mongodb-data:/data/db  # Persistent volume for MongoDB data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
