@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: nginx-gateway
+  name: gateway
   namespace: three-tier
 spec:
   selector:
